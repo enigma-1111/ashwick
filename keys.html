@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ashwick — First Wick keys</title>
+<style>
+  body { margin: 0; background: #0c0e12; color: #f3ead7; font: 16px/1.4 Georgia, serif; padding: 22px 16px 48px; }
+  h1 { font-weight: normal; letter-spacing: .12em; margin-bottom: 4px; }
+  a { color: #e2c27a; }
+  .card { border: 1px solid #3c3424; border-radius: 12px; padding: 12px 14px; margin: 10px 0; }
+  b { font-size: 18px; }
+  .m { color: #cbb892; }
+  .row { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">Walk the street</a></p>
+<h1>FIRST WICK KEYS</h1>
+<p class="m">24 keys. Pick one. No random mint. Dark streets are not for sale.</p>
+<div id="list"></div>
+<script>
+const rows = [
+  ["The Hearth","house","common","90"],
+  ["Loaf and Ember","shop","uncommon","70"],
+  ["The Lantern Inn","inn","rare","180"],
+  ["Clerk and Quill","shop","uncommon","80"],
+  ["The Counter","shop","uncommon","75"],
+  ["Open Shelf","shop","uncommon","110"],
+  ["Needle and Thread","shop","uncommon","60"],
+  ["Ash Forge","workshop","rare","140"],
+  ["Glass and Wick","shop","uncommon","95"],
+  ["The Ledger","shop","uncommon","100"],
+  ["Spice Drawer","shop","uncommon","85"],
+  ["The Count","civic","very rare","220"],
+  ["Paper Lane","shop","uncommon","65"],
+  ["The Dye Pot","shop","uncommon","70"],
+  ["Iron Bell","shop","uncommon","90"],
+  ["The Yard","workshop","rare","120"],
+  ["Barrel and Bone","shop","uncommon","80"],
+  ["Coal House","shop","uncommon","55"],
+  ["Wick and Tallow","shop","uncommon","60"],
+  ["Low Room","house","common","50"],
+  ["Quiet House","house","common","50"],
+  ["Night Bed","inn","rare","160"],
+  ["Lane End","house","common","45"],
+  ["The Crooked Crow","inn","rare","200"]
+];
+document.getElementById("list").innerHTML = rows.map(r =>
+  `<article class="card"><b>${r[0]}</b><div class="m">${r[1]} · ${r[2]}</div><div class="row"><span>First claim</span><span>${r[3]} USDG</span></div></article>`
+).join("");
+</script>
+</body>
+</html>
