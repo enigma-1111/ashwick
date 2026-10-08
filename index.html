@@ -7,18 +7,15 @@
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: #0b0c10; color: #f4ead8; font: 17px/1.4 Georgia, serif; }
-  header { padding: 28px 18px 8px; background: radial-gradient(circle at 50% 100%, #3a2a16, #0b0c10 70%); }
-  h1 { margin: 0 0 4px; letter-spacing: .16em; font-weight: normal; font-size: 32px; }
+  body { margin: 0; background: #0b0c10; color: #f4ead8; font: 17px/1.45 Georgia, serif; }
+  .hero { width: 100%; height: 42vh; object-fit: cover; display: block; background: #1a140c; }
+  header, section { padding: 16px 16px 4px; }
+  h1 { margin: 8px 0 4px; letter-spacing: .14em; font-weight: normal; font-size: 30px; }
+  h2 { font-weight: normal; letter-spacing: .08em; font-size: 16px; margin: 18px 0 8px; }
   a { color: #e2c27a; }
   .muted { color: #cbb892; }
-  h2 { font-weight: normal; letter-spacing: .08em; font-size: 18px; margin: 22px 16px 8px; }
-  .row { display: flex; gap: 12px; overflow-x: auto; padding: 4px 16px 16px; scroll-snap-type: x mandatory; }
-  .card { scroll-snap-align: start; min-width: 180px; background: #16140f; border: 1px solid #4a3d28; border-radius: 14px; padding: 14px; }
-  .card b { display: block; font-size: 18px; }
-  .kind { color: #e2c27a; font-size: 14px; }
-  .town { border-color: #6a5a3a; background: #1c1812; }
-  button { font: inherit; border: 0; border-radius: 999px; padding: 8px 12px; margin-top: 8px; background: #e2c27a; color: #1a140c; }
+  .map { margin: 8px 16px 16px; border: 1px solid #4a3d28; border-radius: 16px; padding: 12px; background: #12141a; }
+  button { font: inherit; border: 0; border-radius: 999px; padding: 8px 12px; margin: 6px 6px 0 0; background: #e2c27a; color: #1a140c; }
   .sheet { position: fixed; left: 0; right: 0; bottom: 0; background: #14120e; border-top: 1px solid #4a3d28; padding: 18px 18px 28px; transform: translateY(110%); transition: .2s; }
   .sheet.open { transform: none; }
   .line { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid #2c261c; }
@@ -27,73 +24,67 @@
 </style>
 </head>
 <body>
+<div class="hero"></div>
 <header>
   <h1>ASHWICK</h1>
-  <p>A small town. Some doors are keys. Some places belong to everyone.</p>
-  <p class="muted">Nothing is sold yet. <a href="rules.html">The rules</a></p>
+  <p>Tap a place. A key is a building you can hold. A town place is not.</p>
+  <p class="muted"><a href="rules.html">The rules</a></p>
 </header>
-<h2>TOWN PLACES</h2>
-<p class="muted" style="margin:0 16px 8px">Not for sale. People need these.</p>
-<div class="row" id="commons"></div>
-<h2>FIRST WICK</h2>
-<p class="muted" style="margin:0 16px 8px">The only street with keys. Open a door to see its rooms.</p>
-<div class="row" id="wick"></div>
-<h2>MORE STREETS</h2>
-<p class="muted" style="margin:0 16px 8px">Houses are drawn. They are not for sale until First Wick is used.</p>
-<div class="row" id="more"></div>
+<section>
+  <h2>THE KEY</h2>
+  <p>The key is the token. It opens the building and the box behind it. You can rent a room. The renter does not get the box. If the key sells, the renter stays until the week ends.</p>
+  <h2>THE ROOMS</h2>
+  <p>A house has two rooms. An inn has beds. A shop has a floor and a back room. A shop can sell goods, list a token, or list an NFT. Swaps stay at the Trade Depot.</p>
+</section>
+<div class="map" id="map">
+  <h2>THE MAP</h2>
+  <p class="muted">Gold buttons are places. Town places are not keys.</p>
+</div>
+<section>
+  <h2>THE GREEN</h2>
+  <p>A park. Benches. One lamp. Not a key. The Town Pub is the same. It belongs to everyone.</p>
+</section>
 <div class="sheet" id="sheet">
   <b id="name"></b>
-  <div class="kind" id="kind"></div>
-  <div class="line"><span class="k">Rooms</span><span id="rooms"></span></div>
-  <div class="line"><span class="k">What you can do</span><span id="does"></span></div>
+  <div class="muted" id="kind"></div>
+  <div class="line"><span class="k">Inside</span><span id="rooms"></span></div>
+  <div class="line"><span class="k">You can</span><span id="does"></span></div>
   <button id="act">Open</button>
   <button class="ghost" id="close">Close</button>
   <p class="muted" id="note"></p>
 </div>
 <script>
-const commons = [
-  ["The Green","park","paths and benches","sit, meet, no shop"],
-  ["The Town Pub","pub","one public room","drink, talk, not a key"],
-  ["Sweep Market","market","stalls for the day","sell goods, no parcel"],
-  ["Trade Depot","depot","weigh house","swap tokens, town takes a cut"],
-  ["The Count","bank","strong room","keep dollars, not a house"],
-  ["The Well","well","one pump","water, no rent"]
+const places = [
+  ["The Town Pub","town","one public room","sit and talk","town"],
+  ["The Green","park","benches","walk, no shop","town"],
+  ["Sweep Market","market","day stalls","sell goods, no parcel","town"],
+  ["Trade Depot","depot","weigh house","swap tokens","town"],
+  ["The Count","bank","strong room","keep dollars","town"],
+  ["The Well","well","one pump","water","town"],
+  ["The Hearth","house on First Wick","2 rooms","rent a room","key"],
+  ["Loaf and Ember","shop on First Wick","floor and back room","sell, list a token","key"],
+  ["The Lantern Inn","inn on First Wick","4 beds","rent a bed","key"],
+  ["The Crooked Crow","inn on First Wick","5 beds","rent a bed","key"],
+  ["Hearth Row","street of houses","20 houses","not for sale yet","later"],
+  ["Quiet","street of houses","18 houses","not for sale yet","later"],
+  ["Chapel Lane","church and school","not a shop","not for sale","town"],
+  ["Gate","way in","stables","not cut","later"]
 ];
-const wick = [
-  ["The Hearth","house","2 rooms","rent a room"],
-  ["The Lantern Inn","inn","4 rooms","rent a bed"],
-  ["Loaf and Ember","shop","shop floor, back room","sell bread, list a token"],
-  ["Clerk and Quill","shop","counter, back room","sell paper, list an NFT"],
-  ["Ash Forge","workshop","work floor","make, no public shop"],
-  ["The Crooked Crow","inn","5 rooms","rent a bed"]
-];
-const more = [
-  ["Hearth Row","houses","20 houses","not cut"],
-  ["Quiet","houses","18 houses","not cut"],
-  ["Chapel Lane","church and school","16 houses","not for sale"],
-  ["Gate","way in","stables","not cut"]
-];
-function paint(id, list, town) {
-  const el = document.getElementById(id);
-  list.forEach((L) => {
-    const d = document.createElement("article");
-    d.className = "card" + (town ? " town" : "");
-    d.innerHTML = "<b>"+L[0]+"</b><div class='kind'>"+L[1]+"</div><button>Open</button>";
-    d.querySelector("button").onclick = () => openPlace(L, town);
-    el.appendChild(d);
-  });
-}
-paint("commons", commons, true);
-paint("wick", wick, false);
-paint("more", more, false);
-function openPlace(L, town) {
-  name.textContent = L[0];
-  kind.textContent = L[1];
-  rooms.textContent = L[2];
-  does.textContent = L[3];
-  note.textContent = town ? "This place belongs to the town. It is not a key." : "Picture only. Nothing is sold yet.";
-  act.textContent = town ? "Enter" : "Look inside";
+const map = document.getElementById("map");
+places.forEach(p => {
+  const b = document.createElement("button");
+  b.textContent = p[0];
+  b.onclick = () => openPlace(p);
+  map.appendChild(b);
+});
+function openPlace(p) {
+  name.textContent = p[0];
+  kind.textContent = p[1];
+  rooms.textContent = p[2];
+  does.textContent = p[3];
+  note.textContent = p[4] === "key" ? "This can be a key. Nothing is sold yet." : "This belongs to the town, or it is not cut yet.";
   act.disabled = false;
+  act.textContent = "Look";
   sheet.classList.add("open");
 }
 act.onclick = () => { note.textContent = "Not open for money yet."; act.disabled = true; };
